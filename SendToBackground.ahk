@@ -9,3 +9,23 @@ WinGet, hWnd, ID, A
 WinSet, Bottom, , A
 WinSet, ExStyle, ^0x20, ahk_id %hWnd%
 return
+
+; Open URL on Chrome app mode
++F4:: 
+;+#z:: 
+
+; Check if clipboard has data
+If (Clipboard)
+{
+    ; Get clipboard content
+    ClipboardContent := Clipboard
+    
+    ; Run the command with clipboard content as argument
+    ;MsgBox, Clipboard content: %ClipboardContent%
+    Run, "C:\Program Files\Google\Chrome\Application\chrome.exe" -app="%ClipboardContent%"
+}
+else
+{
+    ; If clipboard is empty, show a message (optional)
+    MsgBox, Clipboard is empty!
+}
