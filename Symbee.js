@@ -7,9 +7,27 @@ function update() {
   // Blue: #3498DB
   // Yellow: #F1C40F
   // Orange: #F39C12
+  
+  // Parse customDataValue text 
+  $(".intInfoElapsedTimeLabel").text($("#workstate_text_label").text());
 
-  $(".intInfoStateText").html($(".customDataValue").eq(1).html());
-  $(".intInfoState").css("font-size", "3em");
+  var customDataValue = $(".customDataValue").text();
+    var keywords = ["Avis", "Budget", "Payless"];
+
+    var foundKeyword = keywords.find(function(keyword) {
+        return custom DataValue.match(new RegExp(keyword, "i"));
+    });
+  
+   var  result = foundKeyword || customDataValue;
+    //$(".customDataValue").text(result);
+    console.log(result);
+  
+
+  $(".intInfoStateText").html(result);
+  $(".intInfoStateText").css("text-transform", "uppercase");
+
+  $(".intInfoState").css("font-size", "4em");
+  $("body").css("overflow","hidden");
   $(".intInfoElapsedTime").css({
     "font-size": "4em",
     "transition-duration": "60s",
@@ -28,5 +46,5 @@ function update() {
     }
   });
   $("#view_port").css("border", "0px solid #ccc");
-}
-setInterval(update, 3 * 1000);
+} update();
+setInterval(update, 1 * 1000);
