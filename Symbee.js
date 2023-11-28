@@ -15,7 +15,7 @@ function update() {
     var keywords = ["Avis", "Budget", "Payless"];
 
     var foundKeyword = keywords.find(function(keyword) {
-        return custom DataValue.match(new RegExp(keyword, "i"));
+        return customDataValue.match(new RegExp(keyword, "i"));
     });
   
    var  result = foundKeyword || customDataValue;
