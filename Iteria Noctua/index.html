@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Gallery</title>
+    <style>
+        .draggable-container {
+            width: 104px;
+            height: 198px;
+            position: absolute;
+            overflow: hidden;
+            border: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-size: contain; /* Make sure image fits within the div and maintains aspect ratio */
+            background-repeat: no-repeat;
+            background-position: center; /* Center the background image */
+        }
+
+        .draggable img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* This ensures the image maintains its aspect ratio */
+        }
+        .close-button, .resize-handle { position: absolute; cursor: pointer; user-select: none;
+                                        display: flex; align-items: center; justify-content: center; }
+        .close-button { top: 0; right: 0; background-color: red; color: white; }
+        .resize-handle { bottom: 0; right: 0; width: 20px; height: 20px; font-size: 14px; cursor: se-resize; }
+        video { width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+
+<script>
+let zIndex = 1;
+let lastSelectedElement = null; // Track the last selected element
+
+const createDraggable = (file, isVideo) => {
+    const container = document.createElement('div');
+    container.className = 'draggable-container';
+    document.body.appendChild(container);
+
+    // Prevent the context menu on right-click within this container.
+    container.oncontextmenu = e => e.preventDefault();
+
+    const content = isVideo ? document.createElement('video') : document.createElement('div');
+    if (isVideo) {
+        Object.assign(content, { src: `/files/${file}`, loop: true, autoplay: true, muted: true });
+        content.className = 'draggable';
+    } else {
+        container.style.backgroundImage = `url('/files/${file}')`;
+    }
+    container.appendChild(content);
+
+    addFeatures(container);
+};
+
+
+const addFeatures = (container) => {
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'resize-handle';
+    resizeHandle.textContent = '֎';
+    container.appendChild(resizeHandle);
+
+    const closeButton = document.createElement('div');
+    closeButton.className = 'close-button';
+    closeButton.textContent = 'X';
+    closeButton.onclick = () => container.remove();
+    container.appendChild(closeButton);
+
+    setupDrag(container);
+    setupResize(container, resizeHandle);
+};
+
+const setupDrag = (container) => {
+    container.onmousedown = e => {
+        if (e.ctrlKey) {
+            container.style.zIndex = `${zIndex++}`;
+        }
+        lastSelectedElement = container; // Mark this container as the last selected
+        const startX = e.clientX - container.offsetLeft;
+        const startY = e.clientY - container.offsetTop;
+
+        const onMouseMove = e => {
+            container.style.left = `${e.clientX - startX}px`;
+            container.style.top = `${e.clientY - startY}px`;
+        };
+
+        const onMouseUp = () => document.removeEventListener('mousemove', onMouseMove);
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp, { once: true });
+    };
+};
+
+const setupResize = (container, handle) => {
+    handle.onmousedown = e => {
+        e.stopPropagation();
+        const startWidth = container.offsetWidth;
+        const startHeight = container.offsetHeight;
+        const startX = e.clientX;
+        const startY = e.clientY;
+
+        const onMouseMove = e => {
+            const width = startWidth + e.clientX - startX;
+            const height = startHeight + e.clientY - startY;
+            container.style.width = `${width}px`;
+            container.style.height = `${height}px`;
+        };
+
+        const onMouseUp = () => document.removeEventListener('mousemove', onMouseMove);
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp, { once: true });
+    };
+};
+
+// Adjust opacity based on scroll direction
+document.addEventListener('wheel', e => {
+    if (!lastSelectedElement) return; // Do nothing if no element has been selected
+    let opacity = parseFloat(lastSelectedElement.style.opacity || 1); // Use current opacity or default to 1
+    if (e.deltaY < 0) opacity += 0.1; // Scroll up, increase opacity
+    else if (e.deltaY > 0) opacity -= 0.1; // Scroll down, decrease opacity
+    opacity = Math.min(Math.max(opacity, 0), 1); // Clamp opacity between 0 and 1
+    lastSelectedElement.style.opacity = opacity.toFixed(1); // Apply adjusted opacity
+});
+
+(async () => {
+    try {
+        const response = await fetch('http://localhost:3000/list-files');
+        if (!response.ok) throw new Error('Failed to load');
+        const files = await response.json();
+        files.forEach(file => createDraggable(file, file.endsWith('.mp4')));
+    } catch (error) {
+        console.error('Failed to load media:', error);
+    }
+})();
+</script>
+
+
+</body>
+</html>
