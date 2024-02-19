@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Media Gallery</title>
     <style>
+        body{
+            background-color: black;
+        }
         .draggable-container {
             width: 104px;
             height: 198px;
@@ -14,19 +17,23 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             background-size: contain; /* Make sure image fits within the div and maintains aspect ratio */
             background-repeat: no-repeat;
-            background-position: center; /* Center the background image */
+            background-position: left; /* Center the background image */
+            border-radius: 11px;
         }
 
         .draggable img {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain; /* This ensures the image maintains its aspect ratio */
+
         }
-        .close-button, .resize-handle { position: absolute; cursor: pointer; user-select: none;
-                                        display: flex; align-items: center; justify-content: center; }
-        .close-button { top: 0; right: 0; background-color: red; color: white; }
-        .resize-handle { bottom: 0; right: 0; width: 20px; height: 20px; font-size: 14px; cursor: se-resize; }
-        video { width: 100%; height: 100%; }
+        .close-button, .resize-handle { position: absolute; cursor: pointer; user-select: none; color: white;
+            display: flex; align-items: center; justify-content: center; }
+        .close-button { 
+            top: 0; right: 0; background-color: transparent; color: white; }
+        .resize-handle { bottom: 0; right: 0; width: 20px; height: 20px; color: white; font-size: 14px; cursor: se-resize; }
+
+            video { width: 100%; height: 100%; }
     </style>
 </head>
 <body>
@@ -59,13 +66,13 @@ const createDraggable = (file, isVideo) => {
 const addFeatures = (container) => {
     const resizeHandle = document.createElement('div');
     resizeHandle.className = 'resize-handle';
-    resizeHandle.textContent = '֎';
+    resizeHandle.textContent = '֎'; // Keep the resize handle symbol as is.
     container.appendChild(resizeHandle);
 
     const closeButton = document.createElement('div');
     closeButton.className = 'close-button';
-    closeButton.textContent = 'X';
-    closeButton.onclick = () => container.remove();
+    closeButton.innerHTML = '&#8483;'; // Change to use the trademark symbol.
+    closeButton.onclick = () => container.remove(); // Function to remove the container.
     container.appendChild(closeButton);
 
     setupDrag(container);
@@ -130,7 +137,13 @@ document.addEventListener('wheel', e => {
         const response = await fetch('http://localhost:3000/list-files');
         if (!response.ok) throw new Error('Failed to load');
         const files = await response.json();
-        files.forEach(file => createDraggable(file, file.endsWith('.mp4')));
+
+        let shuffled = files
+            .map(value => ({ value, sort: Math.random() }))
+            .sort((a, b) => a.sort - b.sort)
+            .map(({ value }) => value);
+
+        shuffled.forEach(file => createDraggable(file, file.endsWith('.mp4')));
     } catch (error) {
         console.error('Failed to load media:', error);
     }
