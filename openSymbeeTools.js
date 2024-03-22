@@ -7,6 +7,7 @@ const urls = [
     "https://tellmeapp.azurewebsites.net/Auth/Login?",
     "https://www.abgvoice.com/xvr/login.mvc",
     "https://chromewebstore.google.com/detail/text-blaze-templates-and/idgadaccgipmpannjkmfddolnnhmeklj?pli=1",
+    "https://wfo.mt5.verintcloudservices.com/wfo/control/signin?rd=%2Fwfo%2Fcontrol%2Fshowadherence",
 ];
 
 // Function to open each URL in a new tab
