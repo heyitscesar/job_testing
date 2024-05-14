@@ -274,19 +274,9 @@ If yes, when did you call to cancel?
     "reason": "Refueling",
     "scenario": "Customer is disputing refueling charges.",
     "snippet": `    ֎ Working Email Ticket # ֎
-[P] Cs wanted to know why the bill was higher than expected
-[A] [018] Found fuel charge with no info on SEC. Apologized. Charge under 60 USD. Offered to remove fuel charge as a one-time courtesy
-[R] [018] {cursor}. Updated receipt sent. Advised customer to wait 3-5 business days.
-
-[Probing Questions for a charge over 60USD]
-What is the name of the gas station? 
-Where was this gas station located? 
-When did you fill-up the gas tank? 
-How much did you spend on fuel? 
-How many gallons of fuel did you put in? 
-
-[SEC INFO]
-
+[P] Cs wanted to dispute the fuel charge.
+[A] [018] Found fuel charge with no info on SEC. Apologized. Charge under 65 USD. Removing fuel charge as a one-time courtesy.
+[R] [018] {cursor}. Advised customer to wait 3-5 business days. Notified the customer.
 `
 },
 {
