@@ -155,4 +155,3 @@ keyboard.add_hotkey('f22', on_hotkey_pressed, suppress=True)
 
 print("Press F22 to move the cursor to the next icon.")
 keyboard.wait('esc')
-
