@@ -1,21 +1,38 @@
-// Array to store case numbers
-var case_numbers = [];
+/**
+ * This script handles click and mouseover events on specific elements within a webpage.
+ * 
+ * Features:
+ * - Copies text content from span elements with certain classes/attributes to the clipboard when clicked.
+ * - Changes the cursor to a pointer when hovering over span elements.
+ * - Applies custom CSS styles to various elements on the page.
+ * - Prevents copying certain text based on predefined exceptions.
+ * - Handles 8-digit numbers and stores them in an array for batch copying.
+ */
+
+let caseNumbers = []; // Array to store 8-digit case numbers
+const exceptions = ["[x]", "Ticket Comment", "Dashboard"]; // Array of exceptions
 
 // Function to handle click events
 function handleClick(event) {
     // Check if the clicked element has the class 'dataValue' and the attribute 'data-dojo-attach-point' equals 'caseIdSpan'
     if (event.target.classList.contains("dataValue") &&
         "caseIdSpan" === event.target.getAttribute("data-dojo-attach-point")) {
+        var t = event.target.textContent.trim(); // Get the trimmed text content of the clicked element
         
-        var t = event.target.textContent; // Get the text content of the clicked element
-        
-        // Check if the text contains 8 digits and is not one of the exception strings
-        if (t.length === 8 && /^\d{8}$/.test(t)) {
-            case_numbers.push(t); // Add the number to the array if it's 8 digits long
-            console.log("Case number added:", t); // Log the added case number
+        // Check if text contains any of the exception strings
+        if (!exceptions.some(exception => t.includes(exception))) {
+            // If the text is 8 digits long, store it in caseNumbers array
+            if (/^\d{8}$/.test(t)) {
+                if (!caseNumbers.includes(t)) { // Avoid duplicates
+                    caseNumbers.push(t);
+                    console.log("8-digit case number stored:", t);
+                }
+            } else {
+                copyToClipboard(t); // Copy the text content to the clipboard if no exceptions are found
+                console.log("Text content copied to clipboard:", t);
+            }
         } else {
-            copyToClipboard(t); // Copy the text content to the clipboard if it doesn't match the case number condition
-            console.log("Text content copied to clipboard:", t); // Log the copied text content
+            console.log("Text content matches exception, not copied:", t);
         }
     }
 }
@@ -30,19 +47,6 @@ function copyToClipboard(t) {
     document.body.removeChild(e); // Remove the textarea from the body
 }
 
-// Function to handle keypress events (e.g., F2 to copy case numbers)
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'F2') {
-        if (case_numbers.length > 0) {
-            var caseNumbersString = case_numbers.join("\n"); // Join all case numbers with new lines
-            copyToClipboard(caseNumbersString); // Copy all case numbers to the clipboard
-            console.log("Case numbers copied to clipboard:", caseNumbersString); // Log the copied case numbers
-        } else {
-            console.log("No case numbers to copy.");
-        }
-    }
-});
-
 // Function to handle mouseover events
 function handleMouseover(t) {
     // Check if the event target is a SPAN element
@@ -51,14 +55,41 @@ function handleMouseover(t) {
     }
 }
 
+// Event listener to copy the caseNumbers array to clipboard on F2 key press
+document.addEventListener('keydown', function(event) {
+    if (event.key === "F2") {
+        if (caseNumbers.length > 0) {
+            const casesText = caseNumbers.join('\n'); // Join case numbers with a newline
+            copyToClipboard(casesText);
+            console.log("Copied case numbers to clipboard:\n", casesText);
+        } else {
+            console.log("No case numbers to copy.");
+        }
+    }
+});
+
 // Object to handle span-related events
 var SpanHandler = {
     // Method to handle click events on SPAN elements
     handleClick: function(t) {
         if (t.target.tagName === "SPAN") {
-            var e = t.target.textContent; // Get the text content of the clicked element
-            SpanHandler.copyToClipboard(e); // Copy the text content to the clipboard
-            console.log("Text content copied to clipboard:", e); // Log the copied text content
+            var e = t.target.textContent.trim(); // Get the trimmed text content of the clicked element
+            
+            // Check if text contains any of the exception strings
+            if (!exceptions.some(exception => e.includes(exception))) {
+                // If the text is 8 digits long, store it in caseNumbers array
+                if (/^\d{8}$/.test(e)) {
+                    if (!caseNumbers.includes(e)) { // Avoid duplicates
+                        caseNumbers.push(e);
+                        console.log("8-digit case number stored:", e);
+                    }
+                } else {
+                    SpanHandler.copyToClipboard(e); // Copy the text content to the clipboard
+                    console.log("Text content copied to clipboard:", e);
+                }
+            } else {
+                console.log("Text content matches exception, not copied:", e);
+            }
         }
     },
     // Method to handle mouseover events on SPAN elements
