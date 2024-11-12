@@ -3,7 +3,7 @@ function checkElapsedTime() {
     var elapsedTime = $(".intInfoElapsedTime").text();
 
     // If the time reaches 00:10:00, trigger a click on .intBtnEnd
-    if (elapsedTime === "00:10:00") {
+    if (elapsedTime === "00:10:00" || elapsedTime === "00:10:01") {
         $(".intBtnEnd").trigger("click");
     }
 }
