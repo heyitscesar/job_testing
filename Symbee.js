@@ -1,4 +1,15 @@
-function update() {
+function checkElapsedTime() {
+    // Get the current time text from .intInfoElapsedTime
+    var elapsedTime = $(".intInfoElapsedTime").text();
+
+    // If the time reaches 00:10:00, trigger a click on .intBtnEnd
+    if (elapsedTime === "00:10:00") {
+        $(".intBtnEnd").trigger("click");
+    }
+}
+
+
+function update() { checkElapsedTime();
   var thresholds = [3, 8, 12, 16, 20];
   var colors = ['#2ECC71', '#1ABC9C', '#3498DB', '#F1C40F', '#F39C12'];
   // Color palette inspired by Quetzalcoatl:
