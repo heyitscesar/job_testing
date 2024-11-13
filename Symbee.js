@@ -1,13 +1,21 @@
-// Define the timer interval in milliseconds (10 minutes)
-var timerInterval = 10 * 60 * 1000; // 10 minutes in milliseconds
+// Function to generate a random interval between 7 and 10 minutes
+function getRandomInterval() {
+    var min = 7 * 60 * 1000; // 7 minutes in milliseconds
+    var max = 10 * 60 * 1000; // 10 minutes in milliseconds
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 var timer;
 
-// Function to start and reset the 10-minute timer
+// Function to start and reset the timer with a random interval
 function startTimer() {
     // Clear any existing timer to reset it
     clearInterval(timer);
 
-    // Set a new timer
+    // Get a new random interval between 7 and 10 minutes
+    var timerInterval = getRandomInterval();
+
+    // Set a new timer with the random interval
     timer = setInterval(function() {
         $(".intBtnEnd").trigger("click");
     }, timerInterval);
@@ -49,23 +57,4 @@ function update() {
     $(".intInfoElapsedTime").css({
         "font-size": "4em",
         "transition-duration": "60s",
-        "color": function() {
-            var value = parseInt($(this).html().split(":")[1]);
-            var color;
-
-            for (var i = 0; i < thresholds.length; i++) {
-                if (value < thresholds[i]) {
-                    color = colors[i];
-                    break;
-                }
-            }
-
-            return color || colors[colors.length - 1];
-        }
-    });
-    $("#view_port").css("border", "0px solid #ccc");
-}
-
-// Call update function initially and set it to run every second
-update();
-setInterval(update, 1000);
+        "color": function()
