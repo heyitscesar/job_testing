@@ -57,4 +57,23 @@ function update() {
     $(".intInfoElapsedTime").css({
         "font-size": "4em",
         "transition-duration": "60s",
-        "color": function()
+        "color": function() {
+            var value = parseInt($(this).html().split(":")[1]);
+            var color;
+
+            for (var i = 0; i < thresholds.length; i++) {
+                if (value < thresholds[i]) {
+                    color = colors[i];
+                    break;
+                }
+            }
+
+            return color || colors[colors.length - 1];
+        }
+    });
+    $("#view_port").css("border", "0px solid #ccc");
+}
+
+// Call update function initially and set it to run every second
+update();
+setInterval(update, 1000);
